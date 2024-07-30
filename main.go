@@ -7,6 +7,7 @@ import (
 	"hl4-user_service/pkg/store"
 	"hl4-user_service/repository"
 	"hl4-user_service/service"
+	"log"
 	"os"
 )
 
@@ -30,10 +31,11 @@ func main() {
 		return
 	}
 	fmt.Println("start to run...")
-	if err = httpServ.Http.ListenAndServe(); err != nil {
-		return
-	}
-	fmt.Println("runnin...")
+	go func() {
+		log.Fatal(httpServ.Http.ListenAndServe())
+	}()
+
+	fmt.Println("runnin")
 
 	quit := make(chan os.Signal, 1)
 
