@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U store -d user_db" ]
+      interval: 1s
+      retries: 1
+
+  user-service:
+    build: .
+    ports:
+      - "5050:5050"
+    environment:
+      DSN: ${DSN}
+    command: go run main.go
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
